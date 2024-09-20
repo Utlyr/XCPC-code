@@ -1,6 +1,7 @@
 #include"header.h"
 #include<矩阵与向量.cpp>
 //利用增广矩阵进行高斯消元（可以直接输入）
+//高斯消元可以用于求行列式的值，转化为对角线即可
 
 const double esp = 1e-9;//处理精度问题
 
@@ -48,12 +49,12 @@ matrix Gauss(matrix a)
         for(int j=1;j<tmp;j++)
         {
             if(abs(a.a[j][i])<esp)continue;
-            a.a[j]=a.a[j]*(a.a[tmp][i]/a.a[j][i])-a.a[tmp];
+            a.a[j]=a.a[j]-a.a[tmp]*(a.a[j][i]/a.a[tmp][i]);
         }
         for(int j=tmp+1;j<=n;j++)
         {
             if(abs(a.a[j][i])<esp)continue;
-            a.a[j]=a.a[j]*(a.a[tmp][i]/a.a[j][i])-a.a[tmp];
+            a.a[j]=a.a[j]-a.a[tmp]*(a.a[j][i]/a.a[tmp][i]);
         }
     }
     return a;
