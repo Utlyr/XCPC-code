@@ -1,6 +1,6 @@
 #include"header.h"
-//扩展欧几里得法：需gcd(a,b)=1,x为a模b的逆元
-//注意x可能为负数，x=(x+b)%b即可；
+
+//给出ax+by=gcd(a,b)的一组解
 int exgcd(int a,int b,int &x,int &y)
 {
     if(b==0)
