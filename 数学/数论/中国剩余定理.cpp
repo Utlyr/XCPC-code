@@ -24,10 +24,11 @@ int CRT(int k)//k为方程数目
 {
     int n=1,ans=0;
     for(int i=1;i<=k;i++)n=n*r[i];
-    for(int i=1;i<=n;i++)
+    for(int i=1;i<=k;i++)
     {
         int m=n/r[i],m1,x,y;
-        m1=exgcd(m,r[i],x,y);
+        exgcd(m,r[i],x,y);
+        m1=(x+r[i])%r[i];//注意x才是结果
         ans+=m*m1*a[i];
         ans%=n;
     }
