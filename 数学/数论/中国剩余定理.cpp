@@ -34,3 +34,18 @@ int CRT(int k)//k为方程数目
     }
     return ans;
 }
+
+
+//扩展中国剩余定理（模数不互质的情况）
+int excrt(int k)//k为方程数目
+{
+    int ma=a[1],mp=r[1];
+    for(int i=2;i<=k;i++)
+    {
+        int x,y;
+        if((ma-a[i])%__gcd(mp,r[i])!=0)return -1;
+        exgcd(mp,r[i],x,y);
+        if(x<0)x=(x+r[i])%r[i];
+        x=x*(a[i]-ma)/__gcd(mp,r[i]);
+    }
+}
