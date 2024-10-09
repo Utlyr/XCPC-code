@@ -3,15 +3,15 @@
 const int MAXN = 1e6+10;
 //complex<double> z{a,b} 表示a+bi
 double pi = acos(-1.0);
-int rev[MAXN],ans[MAXN];//原始数组，结果数组
 
 //n必须为2的幂
 //a为系数数组 或者 点值数组
-void fft(complex<double> *a,int n,int mode)//mode=1表示从系数到点值，-1则相反
+//如果被卡常，可改为数组
+void fft(vector<complex<double>> &a,int n,int mode)
 {
     if(n==1)return;
-    complex<double> a1[n/2],a2[n/2];
-    for(int i=0;i<=n;i+=2)
+    vector<complex<double>> a1(n/2),a2(n/2);
+    for(int i=0;i<n;i+=2)
     {
         a1[i>>1]=a[i];a2[i>>1]=a[i+1];
     }
@@ -26,8 +26,8 @@ void fft(complex<double> *a,int n,int mode)//mode=1表示从系数到点值，-1
     }
 }
 
-//多项式乘法
-complex<double> a[MAXN],b[MAXN];//系数数组
+//多项式乘法（fft实现）
+vector<complex<double>> a(MAXN),b(MAXN);//系数数组
 void multiple(){
     int n,m;
     cin>>n>>m;
