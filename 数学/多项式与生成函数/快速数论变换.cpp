@@ -25,7 +25,7 @@ int rev[2100000];
 void NTT(vector<int> &x,int n,int mode)
 {
     for(int i=0;i<n;i++)if(i<rev[i])swap(x[i],x[rev[i]]);
-    for(int len=1;len<n;len<<1)
+    for(int len=1;len<n;len<<=1)
     {
         int Wn=ksm(mode?g:ig,(mod-1)/(2*len));
         for(int i=0;i<n;i+=2*len)

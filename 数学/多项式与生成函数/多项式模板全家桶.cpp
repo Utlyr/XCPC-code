@@ -60,7 +60,7 @@ namespace FFT
     }
 }
 
-//快熟数论变换
+//快速数论变换
 namespace NTT
 {
     const int mod=998244353,g=3,ig=332748118;//模数，原根，ig是g的逆元
@@ -85,7 +85,7 @@ namespace NTT
     ****** for(int i=0;i<limit;++i)rev[i]=(rev[i/2]/2+(i%2)*limit/2);
         rev数组处理方法，limit为数组元素上限，是2的幂次
     */
-    void NTT(vector<int> &x,int n,int mode)
+    void ntt(vector<int> &x,int n,int mode)
     {
         for(int i=0;i<n;i++)if(i<rev[i])swap(x[i],x[rev[i]]);
         for(int len=1;len<n;len<<1)
@@ -107,5 +107,40 @@ namespace NTT
             int invs=ksm(n,mod-2);
             for(int i=0;i<n;i++)x[i]=(x[i]*invs)%mod;
         }
+    }
+}
+
+//多项式求乘法逆元
+namespace Ployinv//(NTT实现)
+{
+    const int MAXN = 4e6+10;
+    using namespace NTT;
+    //a为原始多项式数组，b为求逆后的结果
+    vector<int> a(MAXN),b(MAXN),F(MAXN);
+    void ployinvNTT(vector<int> &G,int n)//多项式求逆(mod x^n) ,最后b为结果数组 ,传入b
+    {
+        if(n==1)
+        {
+            G[0]=ksm(a[0],mod-2);return;
+        }
+        ployinvNTT(G,n+1>>1);
+        int limit=1,len=0;
+        while(limit<(n<<1))
+        {
+            limit<<=1;++len;
+        }
+
+        //两种初始化方法
+        for(int i=1;i<limit;i++)rev[i]=(rev[i>>1]>>1)|((i&1)<<len-1);
+        //for(int i=0;i<limit;++i)rev[i]=(rev[i/2]/2+(i%2)*limit/2);
+        for(int i=0;i<n;i++)F[i]=a[i];
+        for(int i=n;i<limit;i++)F[i]=0;
+        ntt(G,limit,1);ntt(F,limit,1);
+        for(int i=0;i<limit;i++)
+        {
+            G[i]=(2-F[i]*G[i]%mod+mod)%mod*G[i]%mod;
+        }
+        ntt(G,limit,0);
+        for(int i=n;i<limit;i++)G[i]=0;
     }
 }
