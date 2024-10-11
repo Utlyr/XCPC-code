@@ -1,18 +1,18 @@
 #include"header.h"
 
-int ksm(int a,int b,int p)
-{
-    int ans=1;
-    while(b>0)
-    {
-        if(b&1)ans=ans*a%p;
-        a=a*a%p;
-        b>>=1;
-    }
-    return ans;
-}
 namespace QR//二次剩余相关，只考虑模数为奇素数的情况
 {
+    int ksm(int a,int b,int p)
+    {
+        int ans=1;
+        while(b>0)
+        {
+            if(b&1)ans=ans*a%p;
+            a=a*a%p;
+            b>>=1;
+        }
+        return ans;
+    }
     //欧拉判别法，判断a是否是p的二次剩余
     int euler(int a,int p)
     {

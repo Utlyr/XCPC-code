@@ -15,7 +15,7 @@ void ployinvNTT(vector<int> &G,int n)//多项式求逆(mod x^n) ,最后G为结�
     {
         limit<<=1;++len;
     }
-
+    
     //两种初始化方法
     for(int i=1;i<limit;i++)rev[i]=(rev[i>>1]>>1)|((i&1)<<len-1);
     //for(int i=0;i<limit;++i)rev[i]=(rev[i/2]/2+(i%2)*limit/2);

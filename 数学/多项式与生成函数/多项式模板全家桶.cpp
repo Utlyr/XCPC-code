@@ -144,3 +144,5 @@ namespace Ployinv//(NTT实现)
         for(int i=n;i<limit;i++)G[i]=0;
     }
 }
+
+
