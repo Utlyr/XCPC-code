@@ -105,10 +105,10 @@ void polyinv(vector<int> &f,vector<int> &g,int n)//求f的乘法逆元，f->g
 }
 
 //n=getl(deg(f)+1)
-void Sqrt(vector<int> &f,vector<int> &g,int n)
+void polysqrt(vector<int> &f,vector<int> &g,int n)
 {
     if(n==1){g[0]=1;return;}//这里根据题目确定
-    Sqrt(f,g,n>>1);
+    polysqrt(f,g,n>>1);
     int l=getl(n<<1);
     for(int i=0;i<n;i++)t3[i]=f[i],t4[i]=0;
     for(int i=n;i<l;i++)t3[i]=t4[i]=0;
@@ -117,4 +117,36 @@ void Sqrt(vector<int> &f,vector<int> &g,int n)
     for(int i=0;i<l;i++)t3[i]=t3[i]*t4[i]%mod;
     NTT(t3,l,0);
     for(int i=0;i<n;i++)g[i]=(g[i]+t3[i])*inv2%mod;
+}
+
+//多项式对数函数
+//n=getl(def(f)+1)
+void polyln(vector<int> &f,vector<int> &g,int n)//g=ln(f) 一定要有[0]f=1否则没有符合条件的
+{
+    g[0]=0;
+    polyinv(f,t3,n);//求逆
+    for(int i=0;i<n-1;i++)t4[i]=f[i+1]*(i+1)%mod;//求导
+    int limit=n<<1;
+    NTT(t3,limit,1);NTT(t4,limit,1);
+    for(int i=0;i<limit;i++)t3[i]=t3[i]*t4[i]%mod;
+    NTT(t3,limit,0);
+    for(int i=1;i<n;i++)g[i]=t3[i-1]*ksm(i,mod-2)%mod;//积分
+    for(int i=0;i<limit;i++)t3[i]=t4[i]=0;//求完后更新t3,t4为0，不然exp会错
+}
+
+vector<int> t5(MAXN),t6(MAXN);
+//多项式指数函数
+//n=getl(def(f)+1)
+void polyexp(vector<int> &f,vector<int> &g,int n)//g=exp(f) 一定要有[0]f=0,否则没有符合条件的
+{
+    if(n==1){g[0]=1;return;}
+    polyexp(f,g,n>>1);
+    polyln(g,t5,n);
+    int l=getl(n<<1);
+    for(int i=0;i<n;i++)t6[i]=f[i];
+    for(int i=n;i<l;i++)t5[i]=t6[i]=0;
+    NTT(t5,l,1);NTT(t6,l,1);NTT(g,l,1);
+    for(int i=0;i<l;i++)g[i]=g[i]*(1-t5[i]+t6[i]+mod)%mod;
+    NTT(g,l,0);
+    for(int i=n;i<l;i++)g[i]=0;
 }
