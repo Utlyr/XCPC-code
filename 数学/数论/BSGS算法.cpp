@@ -3,7 +3,6 @@ typedef long long ll;
 
 map<ll, ll> mp;
 ll a, b, p, ans;
-in
 
 ll exgcd(ll a, ll b, ll& x, ll& y) {  //求逆元和 gcd 都可以使用扩欧，非常方便 QwQ
 	if(!b) {
