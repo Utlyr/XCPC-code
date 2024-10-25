@@ -150,4 +150,3 @@ void polyexp(vector<int> &f,vector<int> &g,int n)//g=exp(f) 一定要有[0]f=0,�
     NTT(g,l,0);
     for(int i=n;i<l;i++)g[i]=0;
 }
-111
