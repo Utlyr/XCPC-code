@@ -1,93 +1,73 @@
 #include"header.h"
-//不带懒标记（单点修改，区间查询)
-template<class node>
-struct SGT
-{
-    #define l(p) p<<1
-    #define r(p) p<<1|1
-    int n;
-    vector<node> tree;
-    SGT(){}
-    SGT(int _n,node _v=node())
-    {
-        init(_n,_v);
-    }
-    template<class T>
-    SGT(vector<T> _init)//base 1
-    {
-        init(_init);
-    }
-    void init(int _n,node _v=node())
-    {
-        init(vector(_n+1,_v));//base 1
-    }
-    template<class T>
-    void build(vector<T>&a,int p,int l,int r)
-    {
-        if(l==r)
-        {
-            tree[p]=a[l];
-            return;
-        }
-        int mid=(l+r)>>1;
-        build(a,l(p),l,mid);
-        build(a,r(p),mid+1,r);
-        pushup(p);
-    }
-    template<class T>
-    void init(vector<T> _init)//此处_init是base 1的
-    {
-        n=_init.size()-1;
-        tree.assign(n<<2,node());
-        build(_init,1,1,n);
-    }
-    void pushup(node p)
-    {
-        tree[p]=tree[l(p)]+tree[r(p)];
-    }
 
-    void modify(int p,int l,int r,int x,const node &v)
-    {
-        if(l==r)
-        {
-            tree[p]=v;
-            return;
-        }
-        int mid=(l+r)>>1;
-        if(x<=mid)modify(l(p),l,mid,x,v);
-        if(x>mid)modify(r(p),mid+1,r,x,v);
-        pushup(p);
-    }
+namespace SegmentTree//线段树，以加法为例，根节点为1
+{
+	const int MAXN = 1e5+5;
+	int a[MAXN];//原始数据
+	struct node
+	{
+		int l,r,sum,lazy;//[l,r]区间
+	};//点结构
+	node tree[MAXN*4];
+	void push_down(int root)//将root处标记向下传递
+	{
+		if(tree[root].l == tree[root].r)
+		{
+			tree[root].sum+=tree[root].lazy;
+			tree[root].lazy=0;//清空标记
+			return;
+		}
+		tree[root].sum+=tree[root].lazy*(tree[root].r-tree[root].l+1);
+		//传递标记
+		tree[root*2].lazy+=tree[root].lazy;
+		tree[root*2+1].lazy+=tree[root].lazy;
+		tree[root].lazy=0;
+	}
 
-    void modify(int x,const node &v)
-    {
-        modify(1,1,n,x,v);
-    }
-    node query(int p,int l,int r,int x,int y)
-    {
-        if(x>r || y<l)return node();
-        if(x>=l && y<=r)return tree[p];
-        int mid=(x+y)>>1;
-        return query(l(p),l,mid,x,y)+query(r(p),mid+1,r,x,y);
-    }
-    node query(int l,int r)
-    {
-        return query(1,1,n,l,r);
-    }
-};
-struct node
-{
-    int val;
-};
-node operator+(node a,node b)
-{
-    node c;
-    c.val=a.val+b.val;
-    return c;
+	//递归建树
+	void build(int l,int r,int root)
+	{
+		tree[root].l=l;tree[root].r=r;tree[root].lazy=0;
+		if(l==r)
+		{
+			tree[root].sum=a[tree[root].l];
+			return;
+		}
+		int mid=(l+r)/2;
+		build(l,mid,root*2);
+		build(mid+1,r,root*2+1);
+		tree[root].sum=tree[root*2].sum+tree[root*2+1].sum;
+	}
+
+	//区间查询
+	int getsum(int l,int r,int root)
+	{
+		if(l<=tree[root].l && r>=tree[root].r)
+		{
+			push_down(root);
+			return tree[root].sum;
+		}
+		push_down(root);
+		int sum=0,mid=(tree[root].l+tree[root].r)/2;
+		if(l<=mid)sum+=getsum(l,r,root*2);
+		if(r>=mid+1)sum+=getsum(l,r,root*2+1);
+		return sum;
+	}
+	//区间更新
+	void update(int l,int r,int c,int root)//[l,r]加c
+	{
+		if(l<=tree[root].l && r>=tree[root].r)
+		{
+			tree[root].lazy+=c;
+			push_down(root);
+			return;
+		}
+		int mid=(tree[root].l+tree[root].r)/2;
+		push_down(root);
+		if(l<=mid)update(l,r,c,root*2);
+		push_down(root*2);
+		if(r>=mid+1)update(l,r,c,root*2+1);
+		push_down(root*2+1);
+		tree[root].sum=tree[root*2].sum+tree[root*2+1].sum;
+	}
 }
-
-//带懒标记，支持区间修改
-struct LSGT
-{
-
-};
