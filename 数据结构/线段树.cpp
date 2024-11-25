@@ -1,14 +1,22 @@
 #include"header.h"
 
-namespace SegmentTree//线段树，以加法为例，根节点为1
+struct SegmentTree//线段树，以加法为例，根节点为1
 {
-	const int MAXN = 1e5+5;
-	int a[MAXN];//原始数据
+	vector<int> a;//原始数据
 	struct node
 	{
 		int l,r,sum,lazy;//[l,r]区间
 	};//点结构
-	node tree[MAXN*4];
+	vector<node> tree;
+	SegmentTree(int n)
+	{
+		tree.resize(n*4+4);
+		a.resize(n+1);
+	}
+	SegmentTree(vector<int> arr)
+	{
+		a=arr;tree.resize(arr.size()*4);
+	}
 	void push_down(int root)//将root处标记向下传递
 	{
 		if(tree[root].l == tree[root].r)
@@ -70,4 +78,4 @@ namespace SegmentTree//线段树，以加法为例，根节点为1
 		push_down(root*2+1);
 		tree[root].sum=tree[root*2].sum+tree[root*2+1].sum;
 	}
-}
+};
