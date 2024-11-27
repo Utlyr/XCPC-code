@@ -59,3 +59,79 @@ matrix Gauss(matrix a)
     }
     return a;
 }
+
+int ksm(int a,int b,int p)
+{
+    int ans=1;
+    while(b)
+    {
+        if(b&1)ans=ans*a%p;
+        b>>=1;
+        a=a*a%p;
+    }
+    return ans;
+}
+matrix GaussMod(matrix a,int p)//模意义下进行高斯消元(对方阵进行)
+{
+    int n=a.n,m=a.m;
+    for(int i=1;i<=n;i++)
+    {
+        for(int j=1;j<=m;j++)a.a[i][j]=(a.a[i][j]%p+p)%p;
+    }
+    for(int i=1;i<=m;i++)
+    {
+        int tmp=-1;
+        for(int j=1;j<=n;j++)
+        {
+            if(abs(a.a[j][i])!=0)//不为0
+            {
+                int f=1;
+                for(int k=1;k<=j-1;k++)
+                {
+                    if(abs(a.a[k][i]) != 0)
+                    {
+                        f=0;
+                        break;
+                    }
+                }
+                if(f)tmp=j;
+                break;
+            }
+        }
+        if(tmp==-1)continue;
+        for(int j=1;j<tmp;j++)
+        {
+            if(abs(a.a[j][i])==0)continue;
+            a.a[j]=a.a[j]-a.a[tmp]*(a.a[j][i]*ksm(a.a[tmp][i],p-2,p));
+            for(int k=1;k<=m;k++)
+            {
+                a.a[j][k]=(a.a[j][k]%p+p)%p;
+            }
+        }
+        for(int j=tmp+1;j<=n;j++)
+        {
+            if(abs(a.a[j][i])==0)continue;
+            a.a[j]=a.a[j]-a.a[tmp]*(a.a[j][i]*ksm(a.a[tmp][i],p-2,p));
+            for(int k=1;k<=m;k++)
+            {
+                a.a[j][k]=(a.a[j][k]%p+p)%p;
+            }
+        }
+    }
+    return a;
+}
+int det(matrix a,int p)
+{
+    a = GaussMod(a,p);
+    int ans=1;
+    for(int i=1;i<=a.n;i++)
+    {
+        int tmp=0;
+        for(int j=1;j<=a.m;j++)
+        {
+            tmp=max(tmp,a.a[i][j]);
+        }
+        ans=ans*tmp%p;
+    }
+    return ans;
+}

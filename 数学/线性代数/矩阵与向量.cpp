@@ -1,6 +1,7 @@
 #include"header.h"
 const int MAXN = 101;
-#define T double
+//#define T double
+#define T int
 //向量直接vector表示
 
 struct matrix//下标从1开始
