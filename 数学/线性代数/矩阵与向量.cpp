@@ -71,6 +71,10 @@ vector<T> operator+(vector<T> a,vector<T> b)//向量减法
     for(int i=0;i<a.size();i++)res[i]=a[i]+b[i];
     return res;
 }
+void Swap(vector<T>& a,vector<T>& b)
+{
+    for(int i=0;i<a.size();i++)swap(a[i],b[i]);
+}
 void show(matrix a)
 {
     for(int i=1;i<=a.n;i++)

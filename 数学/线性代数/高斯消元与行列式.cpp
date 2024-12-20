@@ -33,16 +33,16 @@ matrix Gauss(matrix a)
             if(abs(a.a[j][i])>=esp)//不为0
             {
                 int f=1;
-                for(int k=1;k<=j-1;k++)
+                for(int k=1;k<=i-1;k++)
                 {
-                    if(abs(a.a[k][i])>=esp)
+                    if(abs(a.a[j][k])>=esp)
                     {
                         f=0;
                         break;
                     }
                 }
-                if(f)tmp=j;
-                break;
+                if(f){tmp=j;break;}
+                else continue;
             }
         }
         if(tmp==-1)continue;
@@ -86,16 +86,16 @@ matrix GaussMod(matrix a,int p)//模意义下进行高斯消元(对方阵进行)
             if(abs(a.a[j][i])!=0)//不为0
             {
                 int f=1;
-                for(int k=1;k<=j-1;k++)
+                for(int k=1;k<=i-1;k++)
                 {
-                    if(abs(a.a[k][i]) != 0)
+                    if(abs(a.a[j][k]) != 0)
                     {
                         f=0;
                         break;
                     }
                 }
-                if(f)tmp=j;
-                break;
+                if(f){tmp=j;break;}
+                else continue;
             }
         }
         if(tmp==-1)continue;
@@ -134,4 +134,27 @@ int det(matrix a,int p)
         ans=ans*tmp%p;
     }
     return ans;
+}
+
+int detSample(matrix a,int p)
+{
+    int n=a.n,ans=1,v=1;
+    for(int i=1;i<=n;i++)
+    {
+        for(int j=i+1;j<=n;j++)
+        {
+            while(a.a[i][i])
+            {
+                int x=a.a[j][i]/a.a[i][i];
+                for(int k=i;k<=n;k++)
+                {
+                    a.a[j][k]=(a.a[j][k]-x*a.a[i][k]%p+p)%p;
+                }
+                Swap(a.a[i],a.a[j]);v=-v;
+            }
+            Swap(a.a[i],a.a[j]);v=-v;
+        }
+    }
+    for(int i=1;i<=n;i++)ans=ans*a.a[i][i]%p;
+    return (ans*v+p)%p;
 }
