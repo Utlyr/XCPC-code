@@ -19,7 +19,7 @@ int ksm(int a,int b)
     return ans;
 }
 
-void fft(vector<complex<double>> &a,int n,int mode)
+void fft(vector<complex<double>> &a,int n,int mode)//mode为-1或者1
 {
     if(n==1)return;
     vector<complex<double>> a1(n/2),a2(n/2);
