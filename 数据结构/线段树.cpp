@@ -167,3 +167,115 @@ struct DSGT//动态开点线段树
 		tree[root].sum=tree[ls[root]].sum+tree[rs[root]].sum;
 	}
 };
+
+struct info{//节点信息
+    int mx;
+};
+
+struct node{//标签
+    
+};
+using tag=node;
+info operator+(const info &a,const info &b){
+
+}
+tag operator+(const tag &a,const tag &b){
+
+}
+//将标记f放置到标记a上并且把改标签影响传递到x上
+void apply(info &x,tag &a,tag f){
+    //x+=f;把f的影响放到x上
+    //a+=f;把f的影响放到a上
+}
+template<class info,class tag>
+struct LazySegmentTree{//base0
+    int n;
+    vector<info> tree;
+    vector<tag> lazy;
+    LazySegmentTree(){}//初始化空树
+    LazySegmentTree(int n,info _init=info()){//下面参数为n+1则base1
+        init(vector<info>(n+1,_init));//初始化成info成_init
+    }
+    LazySegmentTree(const vector<info> &_init){init(_init);}
+
+    void init(const vector<info> &_init){
+        n=(int)_init.size()-1;//减1则base1
+        tree.assign((n<<2)+1,info());//开4倍大小，先初始化成默认值
+        lazy.assign((n << 2) + 1, tag());
+        function<void(int,int,int)> build=[&](int p,int l,int r){//建树，[l,r]对应节点为p
+            if(l==r){
+                tree[p]=_init[l-1];//删去减1则base1
+                return;
+            }
+            int m=(l+r)/2;
+            build(2*p,l,m);
+            build(2*p+1,m+1,r);
+            pushup(p);
+        };
+        build(1,1,n);
+    }
+    void apply(int p,const tag &v){//在p节点放置lazy标记
+        ::apply(tree[p],lazy[p],v);
+    }
+    void pushup(int p){//用子节点维护父节点 注意lazy标记的值
+        tree[p]=tree[2*p]+tree[2*p+1];
+    }
+    void pushdown(int p){//下放lazy标记
+        apply(2*p,lazy[p]);
+        apply(2*p+1,lazy[p]);
+        lazy[p]=tag();//标记下放，并删去该节点的标记
+    }
+    //单点修改
+    void modify(int x,const info &v,int p,int l,int r){
+        if(l==r){
+            tree[p]=v;
+            return;
+        }
+        int m=(l+r)/2;
+        pushdown(p);
+        if(x<=m){
+            modify(x,v,2*p,l,m);
+        }
+        else{
+            modify(x,v,2*p+1,m+1,r);
+        }
+        pushup(p);
+    }
+    void modify(int x,const info &v){
+        modify(x,v,1,1,n);
+    }
+    
+    //区间修改，将[x,y]的值修改为v
+    void modify(int x,int y,const tag &v,int p,int l,int r){
+        if(y<l||r<x){//该区间不在修改区间内，无需修改
+            return ;
+        }
+        if (x<=l&&r<=y){//该区间包含在修改区间，放置lazy标记
+            apply(p,v);
+            return ;
+        }
+        int m=(l+r)/2;
+        pushdown(p);//下放标记
+        modify(x,y,v,2*p,l,m);
+        modify(x,y,v,2*p+1,m+1,r);
+        pushup(p);//维护当前节点
+    }
+    void modify(int x,int y,const tag &v){
+        modify(x,y,v,1,1,n);
+    }
+    //区间询问 query（l，r）;
+    info query(int x,int y,int p,int l,int r){
+        if(y<l||r<x){//该区间不在询问区间内，返回空值
+            return info();
+        }
+        if(x<=l&&r<=y){//该区间包含在询问区间，返回信息
+            return tree[p];
+        }
+        int m=(l+r)/2;
+        pushdown(p);//要往下查询，所以下放标记
+        return query(x,y,2*p,l,m)+query(x,y,2*p+1,m+1,r);
+    }
+    info query(int x,int y){
+        return query(x,y,1,1,n);
+    }
+};
